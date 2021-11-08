@@ -133,10 +133,16 @@ async function getOneTweetAndReplyText() {
         tweet = tweetList[0];
     }
 
+    // 以前の取得ツイートを取得
+    const beforeTweet = MyCache.get(MyConst.CACHE_KEY_LLNOW_CURRENT_REPLY_TWEET);
+
     // 発言用テキストを作成する
     if (tweet == null) {
         return `連続してLL Nowのツイートを取得することはできません。${ MyConst.LLNOW_CALL_API_COOLDOWN_MINUTES }分以上の間隔を開けてください。`;
+    } else if (beforeTweet != null && beforeTweet.id == tweet.id ) {
+        return "最新ツイートが更新されていなので表示をスキップします。";
     } else {
+        MyCache.set(MyConst.CACHE_KEY_LLNOW_CURRENT_REPLY_TWEET, tweet);
         return LLNowClient.makeTweetUrl(tweet);
     }
 }
