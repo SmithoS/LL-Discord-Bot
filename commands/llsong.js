@@ -62,7 +62,7 @@ module.exports = {
         //     );
 
         //     await interaction.editReply({
-        //         content: `「${ songName }」の候補を表示します（・８・）`,
+        //         content: `「${ songName }」の候補を表示します`,
         //         components: [row]
         //     });
 
