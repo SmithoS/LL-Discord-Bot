@@ -52,7 +52,9 @@ module.exports = {
                 // 自動取得を設定
                 const sendFunction = async () => {
                     const replyText = await getOneTweetAndReplyText();
-                    channel.send(replyText);
+                    if (replyText != null && replyText != '') {
+                        channel.send(replyText);
+                    }
                 }
                 sendFunction();
                 const intervalId = setInterval(sendFunction, MyConst.LLNOW_AUTO_SEND_INTERVAL_MINUTES * 60 * 1000 );
@@ -89,7 +91,10 @@ module.exports = {
                 await interaction.deferReply();
 
                 // 発言するテキストを取得
-                const replyText = await getOneTweetAndReplyText();
+                let replyText = await getOneTweetAndReplyText();
+                if (replyText == null || replyText == '') {
+                    replyText = '最新ツイートが更新されていません。';
+                }
                 interaction.editReply({
                     content: replyText
                 });
@@ -140,7 +145,7 @@ async function getOneTweetAndReplyText() {
     if (tweet == null) {
         return `連続してLL Nowのツイートを取得することはできません。${ MyConst.LLNOW_CALL_API_COOLDOWN_MINUTES }分以上の間隔を開けてください。`;
     } else if (beforeTweet != null && beforeTweet.id == tweet.id ) {
-        return "最新ツイートが更新されていなので表示をスキップします。";
+        return null;
     } else {
         MyCache.set(MyConst.CACHE_KEY_LLNOW_CURRENT_REPLY_TWEET, tweet);
         return LLNowClient.makeTweetUrl(tweet);
