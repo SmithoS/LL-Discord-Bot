@@ -2,7 +2,7 @@ require('dotenv').config();
 const { MessageEmbed  } = require('discord.js');
 const LLFansTwitterDBClient = require('../lib/LLFansTwitterDBClient');
 const LLFansTwitterApiClient = require('../lib/LLFansTwitterApiClient');
-const moment = require('moment');
+const MyMoment  = require('../lib/MyMoment');
 
 class LLFansTwitterChecker {
 
@@ -29,7 +29,7 @@ class LLFansTwitterChecker {
 
             // 取得データを保存
             await LLFansTwitterDBClient.saveInfo(
-                moment().format('YYYY-MM-DD HH:mm:ss'),
+                MyMoment.getJSTnow().format('YYYY-MM-DD HH:mm:ss'),
                 currentUserInfo.public_metrics.tweet_count,
                 currentUserInfo.public_metrics.followers_count,
                 currentUserInfo.public_metrics.following_count,
@@ -79,8 +79,6 @@ class LLFansTwitterChecker {
                 channel.send({
                     embeds: [embed]
                 });
-            } else {
-                console.log("changeInfoなし");
             }
         }
     }
