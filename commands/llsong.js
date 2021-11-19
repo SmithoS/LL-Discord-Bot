@@ -62,7 +62,7 @@ module.exports = {
         //     );
 
         //     await interaction.editReply({
-        //         content: `「${ songName }」の候補を表示します（・８・）`,
+        //         content: `「${ songName }」の候補を表示します`,
         //         components: [row]
         //     });
 
@@ -187,7 +187,7 @@ async function replySong(songId, interaction) {
         embed.setFields([
             {
                 name: '最新の披露と日付',
-                value: `${ performanceStageDisplayName }\n ${ lastSetlist.getDate().format('YYYY/MM/DD') }（${ moment().diff(lastSetlist.getDate(), 'days') }日前）`,
+                value: `${ performanceStageDisplayName }\n ${ lastSetlist.getDate().format('YYYY/MM/DD') }（${ MyMoment.getJSTnow().diff(lastSetlist.getDate(), 'days') }日前）`,
             },
             {
                 name: '披露回数',
