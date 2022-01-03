@@ -51,9 +51,13 @@ module.exports = {
 
                 // 自動取得を設定
                 const sendFunction = async () => {
-                    const replyText = await getOneTweetAndReplyText();
-                    if (replyText != null && replyText != '') {
-                        channel.send(replyText);
+                    try {
+                        const replyText = await getOneTweetAndReplyText();
+                        if (replyText != null && replyText != '') {
+                            channel.send(replyText);
+                        }
+                    } catch (e) {
+                        // ツイート取得処理に失敗した場合は握りつぶす。次の起動に期待する。
                     }
                 }
                 sendFunction();
@@ -91,9 +95,14 @@ module.exports = {
                 await interaction.deferReply();
 
                 // 発言するテキストを取得
-                let replyText = await getOneTweetAndReplyText();
-                if (replyText == null || replyText == '') {
-                    replyText = '最新ツイートが更新されていません。';
+                let replyText = "";
+                try {
+                    replyText = await getOneTweetAndReplyText();
+                    if (replyText == null || replyText == '') {
+                        replyText = '最新ツイートが更新されていません。';
+                    }
+                } catch (e) {
+                    replyText = "ツイート取得処理でエラーが発生しました。時間をおいて再度試してみてください。"
                 }
                 interaction.editReply({
                     content: replyText
