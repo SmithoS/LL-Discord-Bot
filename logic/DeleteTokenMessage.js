@@ -41,7 +41,7 @@ class DeleteTokenMessage {
 
             if (isContainToken) {
                 await message.delete();
-                message.channel.send("サーバ運営として問題がありそうな発言なので削除しました。間違っている場合は管理者に連絡をお願いできますでしょうか。");
+                message.channel.send("セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者までお問い合わせください。");
             }
         } catch (e) {
         }
