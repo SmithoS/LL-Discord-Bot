@@ -25,7 +25,10 @@ client.on('ready', () => {
 
 // メッセージの精査
 client.on('messageCreate', async (message) => {
-    await DeleteTokenMessage.checkAndDeleteMessage(message);
+    await DeleteTokenMessage.checkAndDeleteMessage(message, client);
+});
+client.on('messageUpdate', async (oldMessage, newMessage) => {
+    await DeleteTokenMessage.checkAndDeleteMessage(newMessage, client);
 });
 
 // 定期的な処理の設定
@@ -40,5 +43,7 @@ process.on('unhandledRejection', error => {
     console.log('-- ERROR --');
     console.log(error);
 });
+
+
 
 client.login(process.env.TOKEN);
