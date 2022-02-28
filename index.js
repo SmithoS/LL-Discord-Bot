@@ -3,7 +3,8 @@ const Discord = require('discord.js');
 const WOKCommands = require('wokcommands');
 const path = require('path');
 const cron = require('node-cron');
-const LLFansTwitterChecker = require('./logic/LLFansTwitterChecker')
+const LLFansTwitterChecker = require('./logic/LLFansTwitterChecker');
+const DeleteTokenMessage = require('./logic/DeleteTokenMessage');
 
 
 const client = new Discord.Client({
@@ -22,6 +23,13 @@ client.on('ready', () => {
     });
 });
 
+// メッセージの精査
+client.on('messageCreate', async (message) => {
+    await DeleteTokenMessage.checkAndDeleteMessage(message, client);
+});
+client.on('messageUpdate', async (oldMessage, newMessage) => {
+    await DeleteTokenMessage.checkAndDeleteMessage(newMessage, client);
+});
 
 // 定期的な処理の設定
 cron.schedule(process.env.LLFANS_TWITTER_CHECKER_CRON, async () => {
@@ -35,5 +43,7 @@ process.on('unhandledRejection', error => {
     console.log('-- ERROR --');
     console.log(error);
 });
+
+
 
 client.login(process.env.TOKEN);
