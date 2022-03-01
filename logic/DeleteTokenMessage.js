@@ -9,6 +9,11 @@ const KUSA_REGEX = /^[wW]+$/;
 const MENTION_REGEX = /^@![0-9]+$/;
 /** 絵文字の正規表現 */
 const EMOJI_REGEX = /^\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
+/** アニメーション絵文字の正規表現 */
+const ANIMATED_EMOJI_REGEX = /^a\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
+/** Twemoji */
+// const TWEMOJI_REGEX = new RegExp(require('twemoji-parser/dist/lib/regex').default, '');
+// Twemojiは要調査
 
 class DeleteTokenMessage {
     static async checkAndDeleteMessage(message, client) {
@@ -28,7 +33,6 @@ class DeleteTokenMessage {
                 }
             }
 
-
             // 半角英数の部分文字列を取得
             const messageContent = message.content || "";
             const matchAry = messageContent.match(TOKEN_REGEX);
@@ -41,7 +45,8 @@ class DeleteTokenMessage {
                         && !str.startsWith("https:")    // URLは削除対象から除外
                         && !str.match(KUSA_REGEX)       // 草原は削除対象から除外
                         && !str.match(MENTION_REGEX)    // メンションは削除対象から除外
-                        && !str.match(EMOJI_REGEX);     // 絵文字は削除対象から除外
+                        && !str.match(EMOJI_REGEX)      // 絵文字は削除対象から除外
+                        && !str.match(ANIMATED_EMOJI_REGEX);// 絵文字は削除対象から除外
                 });
             }
 
