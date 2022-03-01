@@ -7,6 +7,8 @@ const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{20,}/g;
 const KUSA_REGEX = /^[wW]+$/;
 /** メンションの正規表現 */
 const MENTION_REGEX = /^@![0-9]+$/;
+/** 絵文字の正規表現 */
+const EMOJI_REGEX = /^\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
 
 class DeleteTokenMessage {
     static async checkAndDeleteMessage(message, client) {
@@ -38,7 +40,8 @@ class DeleteTokenMessage {
                     return !str.startsWith("http:")     // URLは削除対象から除外
                         && !str.startsWith("https:")    // URLは削除対象から除外
                         && !str.match(KUSA_REGEX)       // 草原は削除対象から除外
-                        && !str.match(MENTION_REGEX);   // メンションは削除対象から除外
+                        && !str.match(MENTION_REGEX)    // メンションは削除対象から除外
+                        && !str.match(EMOJI_REGEX);     // 絵文字は削除対象から除外
                 });
             }
 
