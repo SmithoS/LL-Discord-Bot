@@ -12,12 +12,23 @@ Discord サーバが盛り上がることをサポートするのが目的です
 
 # 使用法
 
-* 各種環境変数を設定する。
+* Discord Developer Portal にてボットの申請を行う。
+* `.env.sample`ファイルをコピーして`.env`にリネーム。各種値を設定する
 * 次のコマンドを実行
 ```bash
 npm ci
 node index.js
 ```
+* Discord Developer Portal にてSCOPES、BOT PERMISSIONSに以下をチェックして招待URLを作成する
+  * SCOPES
+    * bot
+    * applications.commands
+  * BOT PERMISSIONS
+    * Send Messages
+    * Manage Messages
+* 取得したURLでBOTをDiscordサーバに招待する。
+
+
 
 # 注意事項
 このボットは特定の Discord サーバでのみ動かすことを想定しています。
