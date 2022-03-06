@@ -7,6 +7,7 @@ const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{20,}/g;
 const KUSA_REGEX = /^[wW]+$/;
 /** メンションの正規表現 */
 const MENTION_REGEX = /^@![0-9]+$/;
+const ROLE_MENTION_REGEX = /^@&[0-9]+$/;
 /** 絵文字の正規表現 */
 const EMOJI_REGEX = /^\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
 /** アニメーション絵文字の正規表現 */
@@ -45,6 +46,7 @@ class DeleteTokenMessage {
                         && !str.startsWith("https:")    // URLは削除対象から除外
                         && !str.match(KUSA_REGEX)       // 草原は削除対象から除外
                         && !str.match(MENTION_REGEX)    // メンションは削除対象から除外
+                        && !str.match(ROLE_MENTION_REGEX) // メンションは削除対象から除外
                         && !str.match(EMOJI_REGEX)      // 絵文字は削除対象から除外
                         && !str.match(ANIMATED_EMOJI_REGEX);// 絵文字は削除対象から除外
                 });
