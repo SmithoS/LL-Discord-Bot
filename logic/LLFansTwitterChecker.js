@@ -23,8 +23,11 @@ class LLFansTwitterChecker {
             let currentFavTweetId = "";
             let incrementFavCount = 0;
             if (currentFavList != null && currentFavList.length > 0) {
-                currentFavTweetId = String(currentFavList[0].id);
-                incrementFavCount = currentFavList.length - 1;
+                currentFavTweetId = String(currentFavList[0].id_str);
+                incrementFavCount = currentFavList.length;
+            } else {
+                currentFavTweetId = beforeFavTweetId;
+                incrementFavCount = 0;
             }
 
             // 取得データを保存
@@ -46,7 +49,6 @@ class LLFansTwitterChecker {
                 });
             }
             if (beforeInfo != null) {
-
                 if (beforeInfo.followingCount < currentUserInfo.public_metrics.following_count) {
                     changeInfo.push({
                         name: '■ フォローしているユーザ',
