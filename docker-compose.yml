@@ -1,0 +1,9 @@
+version: "3"
+
+services:
+  llbot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_DIR=llbot
