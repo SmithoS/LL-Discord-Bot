@@ -33,6 +33,7 @@ on:
 
 env:
   AWS_REGION: ap-northeast-1
+  SERVICE_DIR: shioriko
   ECR_REPOSITORY: shioriko-bot
   ECS_SERVICE: shioriko-bot-service
   ECS_CLUSTER: LL-Bot-Cluster
@@ -70,7 +71,7 @@ jobs:
           # Build a docker container and
           # push it to ECR so that it can
           # be deployed to ECS.
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker build --build-arg SERVICE_DIR=$SERVICE_DIR -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
