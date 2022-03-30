@@ -1,5 +1,7 @@
 version: "3"
 
+# ポートを指定する必要があるか不明だが、一応指定する
+
 services:
   llbot:
     build:
@@ -7,3 +9,13 @@ services:
       dockerfile: Dockerfile
       args:
         - SERVICE_DIR=llbot
+    ports:
+      - "8001:443"
+  shiorikobot:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - SERVICE_DIR=shioriko
+    ports:
+      - "8002:443"
