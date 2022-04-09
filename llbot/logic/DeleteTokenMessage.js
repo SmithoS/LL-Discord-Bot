@@ -42,13 +42,7 @@ class DeleteTokenMessage {
             let isContainToken = false;
             if (matchAry) {
                 isContainToken = matchAry.some((str) => {
-                    return !str.startsWith("http:")     // URLは削除対象から除外
-                        && !str.startsWith("https:")    // URLは削除対象から除外
-                        && !str.match(KUSA_REGEX)       // 草原は削除対象から除外
-                        && !str.match(MENTION_REGEX)    // メンションは削除対象から除外
-                        && !str.match(ROLE_MENTION_REGEX) // メンションは削除対象から除外
-                        && !str.match(EMOJI_REGEX)      // 絵文字は削除対象から除外
-                        && !str.match(ANIMATED_EMOJI_REGEX);// 絵文字は削除対象から除外
+                    return isDeleteStr(str);
                 });
             }
 
@@ -59,6 +53,32 @@ class DeleteTokenMessage {
         } catch (e) {
         }
     }
+}
+
+function isDeleteStr(str) {
+    // URLは削除対象外
+    if (str.startsWith("http:") || str.startsWith("https:")) {
+        return false;
+    }
+    // 草原は削除対象外
+    if (str.match(KUSA_REGEX)) {
+        return false;
+    }
+    // メンションは削除対象外
+    if (str.match(MENTION_REGEX) || str.match(ROLE_MENTION_REGEX)) {
+        return false;
+    }
+    // 絵文字は削除対象外
+    if (str.match(EMOJI_REGEX) || str.match(ANIMATED_EMOJI_REGEX)) {
+        return false;
+    }
+    // 文字が全て大文字 or 小文字なら削除対象外
+    // 記号が含まれるこもとあるので、正規表現にせず文字変換した結果と照らし合わせる
+    if (str == str.toUpperCase() || str == str.toLowerCase()) {
+        return false;
+    }
+  
+    return true;
 }
 
 module.exports = DeleteTokenMessage;
