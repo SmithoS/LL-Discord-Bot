@@ -41,7 +41,7 @@ env:
   # ECRレポジトリ名
   ECR_REPOSITORY: shioriko-bot
   # タスク定義名
-  ECS_TASK_DEFINITION: Shioriko-bot
+  ECS_TASK_DEFINITION-FAMILY: Shioriko-bot
   # コンテナ名
   CONTAINER_NAME: shioriko-container
   # ECSサービス名
@@ -85,12 +85,18 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+      # タスク定義をダウンロード
+      # すでに動いているものを再利用する
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION-FAMILY }} --query taskDefinition > shioriko-task-definition.json
+
       # タスク定義を作成
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          task-definition: shioriko-task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
