@@ -10,9 +10,12 @@ const client = new Discord.Client({
 });
 
 client.on("messageCreate", async (message) => {
+  // 動作確認用処理
   const messageContent = message.content || "";
   if (messageContent == "しお") {
     message.channel.send("しおしお！");
+  } else if (messageContent == "おはよう") {
+    message.channel.send("おはしお！");
   }
 });
 

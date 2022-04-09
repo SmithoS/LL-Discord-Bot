@@ -32,14 +32,22 @@ on:
       - feature/transferAWS
 
 env:
+  # ---------- 共通 ----------
+  # リージョン。東京
   AWS_REGION: ap-northeast-1
+  # ---------- shioriko-bot ----------
+  # コードが入っているディレクトリ
   SERVICE_DIR: shioriko
+  # ECRレポジトリ名
   ECR_REPOSITORY: shioriko-bot
+  # タスク定義名
+  ECS_TASK_DEFINITION: Shioriko-bot
+  # コンテナ名
+  CONTAINER_NAME: shioriko-container
+  # ECSサービス名
   ECS_SERVICE: shioriko-bot-service
+  # ECSクラスタ名
   ECS_CLUSTER: LL-Bot-Cluster
-  ECS_TASK_DEFINITION: shioriko-bot-task
-  CONTAINER_NAME: shioriko-bot-container
-  CONTAINER_IMAGE_TAG: latest
 
 jobs:
   deploy:
@@ -48,9 +56,11 @@ jobs:
     environment: production
 
     steps:
+      # コードのチェックアウト
       - name: Checkout
         uses: actions/checkout@v3
 
+      # AWS資格情報を設定
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -58,23 +68,24 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.AWS_REGION }}
 
+      # ECR へログイン
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      # dockerイメージを作成してECRへ登録
+      # タグは最新のものに「latest」を設定して運用する
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
         run: |
-          # Build a docker container and
-          # push it to ECR so that it can
-          # be deployed to ECS.
           docker build --build-arg SERVICE_DIR=$SERVICE_DIR -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+      # タスク定義を作成
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
@@ -83,6 +94,7 @@ jobs:
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
+      # ECSへデプロイ
       - name: Deploy Amazon ECS task definition
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
