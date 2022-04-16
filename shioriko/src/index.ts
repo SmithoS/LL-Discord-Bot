@@ -1,4 +1,5 @@
 require("dotenv").config();
+import { DeleteMessage } from "./logic/DeleteMessage";
 const Discord = require("discord.js");
 
 const client = new Discord.Client({
@@ -9,14 +10,12 @@ const client = new Discord.Client({
   ],
 });
 
+// メッセージの精査
 client.on("messageCreate", async (message) => {
-  // 動作確認用処理
-  const messageContent = message.content || "";
-  if (messageContent == "しお") {
-    message.channel.send("しおしお！");
-  } else if (messageContent == "おはよう") {
-    message.channel.send("おはしお！");
-  }
+  await DeleteMessage.checkAndDeleteMessage(message, client);
+});
+client.on("messageUpdate", async (oldMessage, newMessage) => {
+  await DeleteMessage.checkAndDeleteMessage(newMessage, client);
 });
 
 client.login(process.env.TOKEN);
