@@ -14,7 +14,7 @@ services:
   shiorikobot:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile_ts
       args:
         - SERVICE_DIR=shioriko
     ports:
