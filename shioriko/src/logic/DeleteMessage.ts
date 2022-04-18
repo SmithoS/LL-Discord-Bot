@@ -1,4 +1,7 @@
 require("dotenv").config();
+import { DeleteMessageDBClient } from "../lib/DeleteMessageDBClient";
+import { DeleteMessageReason } from "../model/DeleteMessageReason";
+const moment = require("moment");
 
 /** トークンらしい文字列と判断する正規表現 */
 const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{20,}/g;
@@ -12,6 +15,9 @@ const ROLE_MENTION_REGEX = /^@&[0-9]+$/;
 const EMOJI_REGEX = /^\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
 /** アニメーション絵文字の正規表現 */
 const ANIMATED_EMOJI_REGEX = /^a\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
+
+/** 日時フォーマット */
+const DATE_FORMAT = "YYYY-MM-DD HH:mm:ss";
 
 /** メッセージが正しいどうか判定するための内部用モジュールのインタフェース */
 interface ValidateModule {
@@ -65,8 +71,36 @@ export class DeleteMessage {
 
     // 何かしら問題があれば削除
     if (errorResult.length > 0) {
-      await message.delete();
-      message.channel.send(
+      const now = moment();
+      const types: string = errorResult.reduce((prev, curr) => {
+        return (prev != "" ? "," : "") + curr.type;
+      }, "");
+      const messages: string = errorResult.reduce((prev, curr) => {
+        return (prev != "" ? "," : "") + curr.message;
+      }, "");
+
+      // 登録
+      const promiseList: Array<Promise<any>> = [];
+
+      promiseList.push(
+        DeleteMessageDBClient.registDeleteMsg(
+          new DeleteMessageReason(
+            message.author.id,
+            now.format(DATE_FORMAT),
+            message.author.username,
+            message.channelId,
+            message.channel.name,
+            types,
+            messageContent,
+            messages
+          )
+        )
+      );
+
+      promiseList.push(message.delete());
+
+      await Promise.all(promiseList);
+      await message.channel.send(
         "セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者までお問い合わせください。"
       );
     }
@@ -111,7 +145,7 @@ const tokenValidater: ValidateModule = {
     };
 
     // トークンらしい文字列を抽出
-    const matchAry: string[] = text.match(TOKEN_REGEX);
+    const matchAry: string[] = text.match(TOKEN_REGEX) || [];
     const tokenStrList: string[] = matchAry.filter((t) => {
       return isTokenStr(t);
     });
