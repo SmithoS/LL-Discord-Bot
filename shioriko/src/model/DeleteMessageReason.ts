@@ -2,6 +2,7 @@ export class DeleteMessageReason {
   private _userId: string;
   private _datetime: string;
   private _userName: string;
+  private _serverId: string;
   private _channelId: string;
   private _channelName: string;
   private _type: string;
@@ -12,6 +13,7 @@ export class DeleteMessageReason {
     userId: string,
     datetime: string,
     userName: string,
+    serverId: string,
     channelId: string,
     channelName: string,
     type: string,
@@ -21,6 +23,7 @@ export class DeleteMessageReason {
     this.userId = userId;
     this.datetime = datetime;
     this.userName = userName;
+    this._serverId = serverId;
     this.channelId = channelId;
     this.channelName = channelName;
     this.type = type;
@@ -47,6 +50,13 @@ export class DeleteMessageReason {
   }
   set userName(value: string) {
     this._userName = value;
+  }
+
+  get serverId(): string {
+    return this._serverId;
+  }
+  set serverId(value: string) {
+    this._serverId = value;
   }
 
   get channelId(): string {

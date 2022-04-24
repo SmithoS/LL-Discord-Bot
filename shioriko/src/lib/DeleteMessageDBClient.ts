@@ -31,49 +31,77 @@ export class DeleteMessageDBClient {
 
     const command: PutItemCommand = new PutItemCommand({
       TableName: DELETE_MSG_TABLE,
-      Item: this.createDeleteMsgTableItem(reason),
+      Item: this.convertDeleteMsgReason2TableItem(reason),
     });
     await dbClient.send(command);
   }
 
-  // /**
-  //  * 削除理由を取得
-  //  * @returns
-  //  */
-  // static async getDeleteMsg(
-  //   datetime: string
-  // ): Promise<Array<DeleteMessageReason>> {
-  //   const dbClient: DynamoDBClient = new DynamoDBClient(config);
+  /**
+   * 削除理由のうち最新のN件を取得
+   * @returns
+   */
+  static async getDeleteMsgByCount(
+    serverId: string,
+    count: number
+  ): Promise<Array<DeleteMessageReason>> {
+    const me = this;
+    const dbClient: DynamoDBClient = new DynamoDBClient(config);
 
-  //   const command: QueryCommand = new QueryCommand({
-  //     TableName: DELETE_MSG_TABLE,
-  //     IndexName: "role-index",
-  //     KeyConditionExpression: "Datetime = :datetime",
-  //     ExpressionAttributeValues: {
-  //       ":datetime": { S: datetime },
-  //     },
-  //   });
-  //   const output = await dbClient.send(command);
+    const command: QueryCommand = new QueryCommand({
+      TableName: DELETE_MSG_TABLE,
+      KeyConditionExpression: "ServerId = :s",
+      ExpressionAttributeValues: {
+        ":s": { S: serverId },
+      },
+      Limit: count,
+      IndexName: "ServerId-Datetime-index",
+      ScanIndexForward: false,
+    });
+    const output = await dbClient.send(command);
 
-  //   let delMsgList: Array<DeleteMessageReason> = [];
-  //   return delMsgList;
-  // }
+    let delMsgList: Array<DeleteMessageReason> = output.Items.map((i) => {
+      return me.convertTableItem2DeleteMsgReasonFrom(i);
+    });
+    return delMsgList;
+  }
 
   /**
-   * 削除理由をDB登録用パラメータに変換する
+   * 削除理由クラスをテーブル項目に変換する
    * @param reason
    * @returns
    */
-  private static createDeleteMsgTableItem(reason: DeleteMessageReason) {
+  private static convertDeleteMsgReason2TableItem(reason: DeleteMessageReason) {
     return {
       UserId: { S: reason.userId },
       Datetime: { S: reason.datetime },
       UserName: { S: reason.userName },
+      ServerId: { S: reason.serverId },
       ChannelId: { S: reason.channelId },
       ChannelName: { S: reason.channelName },
       Type: { S: reason.type },
       Message: { S: reason.message },
       ReasonMsg: { S: reason.reasonMsg },
     };
+  }
+
+  /**
+   * テーブル項目を削除理由クラスに変換する
+   * @param item
+   * @returns
+   */
+  private static convertTableItem2DeleteMsgReasonFrom(
+    item: any
+  ): DeleteMessageReason {
+    return new DeleteMessageReason(
+      item.UserId.S,
+      item.Datetime.S,
+      item.UserName.S,
+      item.ServerId.S,
+      item.ChannelId.S,
+      item.ChannelName.S,
+      item.Type.S,
+      item.Message.S,
+      item.ReasonMsg.S
+    );
   }
 }

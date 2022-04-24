@@ -88,6 +88,7 @@ export class DeleteMessage {
             message.author.id,
             now.format(DATE_FORMAT),
             message.author.username,
+            message.guildId,
             message.channelId,
             message.channel.name,
             types,
@@ -154,9 +155,11 @@ const tokenValidater: ValidateModule = {
     if (tokenStrList.length > 0) {
       rtnResult.result = false;
       rtnResult.message =
-        "トークンらしき文字列として「" +
-        tokenStrList.join("、") +
-        "」が検出されました";
+        "トークンらしき文字列として" +
+        tokenStrList.reduce((pre, cur) => {
+          return pre + "「" + cur + "」";
+        }, "") +
+        "が検出されました";
     }
 
     return rtnResult;

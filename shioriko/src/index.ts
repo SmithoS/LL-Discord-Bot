@@ -1,6 +1,10 @@
-require("dotenv").config();
 import { DeleteMessage } from "./logic/DeleteMessage";
-const Discord = require("discord.js");
+import Discord from "discord.js";
+// WOKCommands ライブラリは型定義ファイルがおかしく、import するとトランスパイル時にエラーとなるのでrequireで読み込んでエラーを避ける
+const WOKCommands = require("wokcommands");
+import path from "path";
+import dotenv from "dotenv";
+dotenv.config();
 
 const client = new Discord.Client({
   intents: [
@@ -8,6 +12,14 @@ const client = new Discord.Client({
     Discord.Intents.FLAGS.GUILD_MESSAGES,
     Discord.Intents.FLAGS.GUILD_MESSAGE_REACTIONS,
   ],
+});
+
+client.on("ready", () => {
+  new WOKCommands(client, {
+    commandsDir: path.join(__dirname, "commands"),
+    ignoreBots: true,
+    testServers: [process.env.SERVER_ID],
+  });
 });
 
 // メッセージの精査
