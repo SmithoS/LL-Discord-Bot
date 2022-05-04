@@ -20,7 +20,7 @@ const ActionButtons: ActionButtonInterface[] = [
     id: "act01",
     name: "直近の削除されたメッセージを教えて",
     style: "PRIMARY",
-    buttonActionClass: new GetDeletedMessages(),
+    buttonActionClass: new GetDeletedMessages(1),
   },
   {
     id: "act99",
@@ -35,7 +35,7 @@ const SUB_COMMAND_ACTION = "action";
 
 module.exports = {
   category: "Shioriko Bot command",
-  description: "削除されたメッセージを取得します。",
+  description: "栞子Botのアクションです。",
   testOnly: true,
   slash: true,
   syntaxError: "",

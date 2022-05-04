@@ -10,14 +10,27 @@ const DISPLAY_SECONDS = 60;
  * 削除されたメッセージを取得する
  */
 export class GetDeletedMessages extends BaseButtonAction {
-  async action(interaction) {
-    await this.getDeletedMsgs(interaction, 1);
+  count: number;
+
+  constructor(count: number) {
+    super();
+    this.count = count;
   }
 
-  private async getDeletedMsgs(interaction, count) {
+  async action(interaction) {
     // 削除メッセージを取得
     const delMsgs: DeleteMessageReason[] =
-      await DeleteMessageDBClient.getDeleteMsgByCount(interaction.guildId, 1);
+      await DeleteMessageDBClient.getDeleteMsgByCount(
+        interaction.guildId,
+        this.count
+      );
+
+    if (delMsgs.length == 0) {
+      await interaction.editReply({
+        content: "削除されたメッセージは特にありません。",
+      });
+      return;
+    }
 
     // 表示用に整形
     let embed: MessageEmbed[] = delMsgs.map((d) => {
@@ -50,7 +63,7 @@ export class GetDeletedMessages extends BaseButtonAction {
     });
 
     await interaction.editReply({
-      content: `直近の削除メッセージ${count}件を表示します。\nこのメッセージ自体にセキュリティ違反文章が含まれているので、${DISPLAY_SECONDS}秒後に自動削除することにご注意ください。`,
+      content: `直近の削除メッセージ${this.count}件を表示します。\nこのメッセージ自体にセキュリティ違反文章が含まれているので、${DISPLAY_SECONDS}秒後に自動削除することにご注意ください。`,
       components: [],
       embeds: embed,
     });
