@@ -6,6 +6,8 @@ import {
   ValidateResult,
 } from "./messageValidater/BaseValidater";
 import { TokenValidater } from "./messageValidater/TokenValidater";
+import { LineCountValidater } from "./messageValidater/LineCountValidater";
+import { MentionValidater } from "./messageValidater/MentionValidater";
 const moment = require("moment");
 
 /** 日時フォーマット */
@@ -38,7 +40,11 @@ export class DeleteMessage {
     const messageContent: string = message.content || "";
 
     // チェックするモジュール一覧
-    const validateModuleList: Array<BaseValidater> = [new TokenValidater()];
+    const validateModuleList: Array<BaseValidater> = [
+      new TokenValidater(),
+      new LineCountValidater(),
+      new MentionValidater(),
+    ];
     const errorResult: Array<ValidateResult> = [];
 
     // 各種モジュールでチェック
