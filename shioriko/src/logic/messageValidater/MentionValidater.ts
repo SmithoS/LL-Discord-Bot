@@ -16,7 +16,7 @@ export class MentionValidater extends BaseValidater {
     const memtions: string[] = message.match(MENTION_REGEX) || [];
     if (memtions.length > MAX_MENTION_COUNT) {
       rtnResult.result = false;
-      rtnResult.message = `メンションが${MAX_MENTION_COUNT}件を越えました。`;
+      rtnResult.message = `メンションが${MAX_MENTION_COUNT}件を越えます。`;
     }
 
     return rtnResult;

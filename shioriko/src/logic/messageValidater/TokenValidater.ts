@@ -61,7 +61,7 @@ export class TokenValidater extends BaseValidater {
         tokenStrList.reduce((pre, cur) => {
           return pre + "「" + cur + "」";
         }, "") +
-        "が検出されました";
+        "が検出されています。";
     }
 
     return rtnResult;

@@ -59,10 +59,10 @@ export class DeleteMessage {
     if (errorResult.length > 0) {
       const now = moment();
       const types: string = errorResult.reduce((prev, curr) => {
-        return (prev != "" ? "," : "") + curr.type;
+        return prev + (prev != "" ? "\n" : "") + curr.type;
       }, "");
       const messages: string = errorResult.reduce((prev, curr) => {
-        return (prev != "" ? "," : "") + curr.message;
+        return prev + (prev != "" ? "\n" : "") + curr.message;
       }, "");
 
       // 削除理由の登録、メッセージ削除
