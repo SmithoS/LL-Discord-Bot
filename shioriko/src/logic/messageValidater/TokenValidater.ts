@@ -6,7 +6,7 @@ const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{25,}/g;
 /** 草原の正規表現 */
 const KUSA_REGEX = /^[wW]+$/;
 /** メンションの正規表現 */
-const MENTION_REGEX = /^@![0-9]+$/;
+const MENTION_REGEX = /^@[0-9]+$/;
 const ROLE_MENTION_REGEX = /^@&[0-9]+$/;
 /** 絵文字の正規表現 */
 const EMOJI_REGEX = /^\:[a-zA-Z0-9_\-\:\+]+\:[0-9]+$/;
