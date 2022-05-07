@@ -1,6 +1,6 @@
 import { BaseValidater, ValidateResult } from "./BaseValidater";
 
-const MAX_LINE_COUNT = 4;
+const MAX_LINE_COUNT = 15;
 
 export class LineCountValidater extends BaseValidater {
   validate(message: string): ValidateResult {

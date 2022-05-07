@@ -1,7 +1,7 @@
 import { BaseValidater, ValidateResult } from "./BaseValidater";
 
 /** トークンらしい文字列と判断する正規表現 */
-const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{20,}/g;
+const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{25,}/g;
 
 /** 草原の正規表現 */
 const KUSA_REGEX = /^[wW]+$/;

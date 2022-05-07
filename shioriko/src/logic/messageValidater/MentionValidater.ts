@@ -3,7 +3,7 @@ import { BaseValidater, ValidateResult } from "./BaseValidater";
 /** メンションの正規表現 */
 const MENTION_REGEX = /<@[&]?[0-9]+>/g;
 /** 許容するメンション数 */
-const MAX_MENTION_COUNT = 10;
+const MAX_MENTION_COUNT = 15;
 
 export class MentionValidater extends BaseValidater {
   validate(message: string): ValidateResult {
