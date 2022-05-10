@@ -86,7 +86,8 @@ export class DeleteMessage {
 
       await Promise.all(promiseList);
       await message.channel.send(
-        "セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者までお問い合わせください。"
+        "セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者までお問い合わせください。\n" +
+          "I delete your message due to security issues. Please contact the administrator for more information."
       );
     }
   }

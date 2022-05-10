@@ -8,6 +8,9 @@ import { BaseButtonAction } from "../buttonAction/BaseButtonAction";
 import { GetDeletedMessages } from "../buttonAction/GetDeletedMessages";
 import { CancelAction } from "../buttonAction/CancelAction";
 
+/**
+ * アクションの選択肢のボタン定義
+ */
 interface ActionButtonInterface {
   id: string;
   name: string;
@@ -49,7 +52,7 @@ module.exports = {
       type: "SUB_COMMAND",
       name: SUB_COMMAND_ACTION,
       description:
-        "栞子Botが持っているアクションを表示します。適正（権限）を持っている人のみ実行できます。",
+        "栞子Botが持っているアクションを表示します。特定のロールの人のみ実行できます。",
     },
   ],
   callback: async ({ channel, interaction }) => {
@@ -64,7 +67,7 @@ module.exports = {
         subcommandAction(channel, interaction);
         break;
       default:
-        await interaction.editReply("はい、何でしょうか？");
+        await interaction.editReply("はい、何でしょうか？" + "\nYes, sir?");
         break;
     }
   },
@@ -72,25 +75,27 @@ module.exports = {
 
 async function subcommandGreet(interaction) {
   await interaction.editReply(
-    "お初にお目にかかります。栞子Botです。この Discord サーバの監視をしております。"
+    "お初にお目にかかります。栞子Botです。この Discord サーバの監視をしております。\n" +
+      "I see you for the first time. I'm Shioriko bot. I'm monitoring this Discord server."
   );
 }
 
 async function subcommandAction(channel, interaction) {
   // ユーザのロールをチェック
   let hasRole: boolean = true;
-  const botActionRole: string =
+  const availableBotActionRole: string =
     process.env.AVAILABLE_BOT_ACTION_ROLE_NAME || "";
-  if (botActionRole != "") {
+  if (availableBotActionRole != "") {
     const roles = [...interaction.member.roles.cache.values()];
     hasRole = roles.some((r) => {
-      return r.name == botActionRole;
+      return r.name == availableBotActionRole;
     });
   }
 
   if (!hasRole) {
     await interaction.editReply(
-      "申し訳ありません。適正（権限）を持たれているかたにしかお答えすることができません。"
+      `申し訳ありません。特定のロール（${availableBotActionRole}）を持たれているかたにしかお答えすることができません。\n` +
+        `I'm sorry. I can only answer to those who have a specific role (${availableBotActionRole} role).`
     );
     return;
   }
@@ -107,7 +112,7 @@ async function subcommandAction(channel, interaction) {
   });
 
   await interaction.editReply({
-    content: "どのような御用でしょうか？",
+    content: "どのような御用でしょうか？\n" + "May I help you?",
     components: [row],
   });
 
