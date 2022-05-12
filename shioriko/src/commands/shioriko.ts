@@ -7,6 +7,9 @@ import {
 import { BaseButtonAction } from "../buttonAction/BaseButtonAction";
 import { GetDeletedMessages } from "../buttonAction/GetDeletedMessages";
 import { CancelAction } from "../buttonAction/CancelAction";
+import { BaseButtonMaintenance } from "../buttonMaintenance/BaseButtonMaintenance";
+import { CancelMaintenance } from "../buttonMaintenance/CancelMaintenance";
+import { ShowCommands } from "../buttonMaintenance/ShowCommands";
 
 /**
  * サブコマンド定義
@@ -14,7 +17,7 @@ import { CancelAction } from "../buttonAction/CancelAction";
 interface SubcommantInterface {
   name: string;
   description: string;
-  action(channel, interaction): Promise<void>;
+  action(client, channel, interaction): Promise<void>;
 }
 
 /**
@@ -25,6 +28,16 @@ interface ActionButtonInterface {
   name: string;
   style: MessageButtonStyleResolvable;
   buttonActionClass: BaseButtonAction;
+}
+
+/**
+ * メンテナンスの選択肢のボタン定義
+ */
+interface MaintenanceButtonInterface {
+  id: string;
+  name: string;
+  style: MessageButtonStyleResolvable;
+  buttonActionClass: BaseButtonMaintenance;
 }
 
 /**
@@ -46,6 +59,11 @@ const Subcommands: SubcommantInterface[] = [
     description:
       "栞子Botが持っているアクションを表示します。特定のロールの人のみ実行できます。",
     action: subcommandAction,
+  },
+  {
+    name: "maintenance",
+    description: "栞子Botのメンテナンス用のコマンドです。",
+    action: subcommandMaintenance,
   },
 ];
 
@@ -80,7 +98,7 @@ module.exports = {
       description: sc.description,
     };
   }),
-  callback: async ({ channel, interaction }) => {
+  callback: async ({ client, channel, interaction }) => {
     // 処理に時間がかかるだろうから deferReply で一旦返答しておく
     await interaction.deferReply();
 
@@ -91,7 +109,7 @@ module.exports = {
     });
 
     if (selectSubcommand) {
-      await selectSubcommand.action(channel, interaction);
+      await selectSubcommand.action(client, channel, interaction);
     } else {
       await interaction.editReply("はい、何でしょうか？" + "\nYes, sir?");
     }
@@ -103,7 +121,7 @@ module.exports = {
  * @param channel
  * @param interaction
  */
-async function subcommandGreet(channel, interaction) {
+async function subcommandGreet(client, channel, interaction) {
   await interaction.editReply(
     "お初にお目にかかります。栞子Botです。この Discord サーバの監視をしております。\n" +
       "I see you for the first time. I'm Shioriko bot. I'm monitoring this Discord server."
@@ -115,7 +133,7 @@ async function subcommandGreet(channel, interaction) {
  * @param channel
  * @param interaction
  */
-async function subcommandTalk(channel, interaction) {
+async function subcommandTalk(client, channel, interaction) {
   // トークの候補
   const talkList: string[] = [
     "英語をミアさんから教えてもらっているのですが、難しいですね。\n" +
@@ -137,7 +155,7 @@ async function subcommandTalk(channel, interaction) {
  * @param channel
  * @param interaction
  */
-async function subcommandAction(channel, interaction) {
+async function subcommandAction(client, channel, interaction) {
   // ユーザのロールをチェック
   let hasRole: boolean = true;
   const availableBotActionRole: string =
@@ -184,6 +202,58 @@ async function subcommandAction(channel, interaction) {
   collector.on("end", async (collection) => {
     const customId: string = collection.first()?.customId;
     const actBtn: ActionButtonInterface = ActionButtons.find((ab) => {
+      return ab.id == customId;
+    });
+
+    if (actBtn != null) {
+      actBtn.buttonActionClass.action(interaction);
+    }
+  });
+}
+
+async function subcommandMaintenance(client, channel, interaction) {
+  const MaintenanceButtons: MaintenanceButtonInterface[] = [
+    {
+      id: "maint01",
+      name: "コマンド一覧の表示",
+      style: "PRIMARY",
+      buttonActionClass: new ShowCommands(client, channel),
+    },
+    {
+      id: "maint99",
+      name: "キャンセル",
+      style: "SECONDARY",
+      buttonActionClass: new CancelMaintenance(),
+    },
+  ];
+
+  // 実施できるアクションを並べて表示
+  const row = new MessageActionRow();
+  MaintenanceButtons.forEach((ab) => {
+    row.addComponents(
+      new MessageButton()
+        .setCustomId(ab.id)
+        .setLabel(ab.name)
+        .setStyle(ab.style)
+    );
+  });
+
+  await interaction.editReply({
+    content: "どのようなメンテナンス内容でしょうか？",
+    components: [row],
+  });
+
+  const filter = (btnInt: ButtonInteraction) => {
+    return interaction.user.id === btnInt.user.id;
+  };
+  const collector = channel.createMessageComponentCollector({
+    filter,
+    max: 1,
+    time: 1000 * 15,
+  });
+  collector.on("end", async (collection) => {
+    const customId: string = collection.first()?.customId;
+    const actBtn: MaintenanceButtonInterface = MaintenanceButtons.find((ab) => {
       return ab.id == customId;
     });
 
