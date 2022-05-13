@@ -62,9 +62,7 @@ export class ShowCommands extends BaseButtonMaintenance {
       },
       {
         name: "コマンド種類",
-        value: `> ${
-          cmnd.guild != null ? "ギルド" : "アプリケーション"
-        }コマンド`,
+        value: `${cmnd.guild != null ? "ギルド" : "アプリケーション"}コマンド`,
       },
     ];
 

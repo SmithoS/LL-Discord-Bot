@@ -10,6 +10,10 @@ import { CancelAction } from "../buttonAction/CancelAction";
 import { BaseButtonMaintenance } from "../buttonMaintenance/BaseButtonMaintenance";
 import { CancelMaintenance } from "../buttonMaintenance/CancelMaintenance";
 import { ShowCommands } from "../buttonMaintenance/ShowCommands";
+import {
+  DeleteCommand,
+  COMMAND_TYPE,
+} from "../buttonMaintenance/DeleteCommand";
 
 /**
  * サブコマンド定義
@@ -218,6 +222,26 @@ async function subcommandMaintenance(client, channel, interaction) {
       name: "コマンド一覧の表示",
       style: "PRIMARY",
       buttonActionClass: new ShowCommands(client, channel),
+    },
+    {
+      id: "maint02",
+      name: "ギルドコマンド削除",
+      style: "PRIMARY",
+      buttonActionClass: new DeleteCommand(
+        client,
+        channel,
+        COMMAND_TYPE.GUILD_COMMAND
+      ),
+    },
+    {
+      id: "maint03",
+      name: "アプリケーションコマンド削除",
+      style: "PRIMARY",
+      buttonActionClass: new DeleteCommand(
+        client,
+        channel,
+        COMMAND_TYPE.APPLICATION_COMMAND
+      ),
     },
     {
       id: "maint99",
