@@ -66,7 +66,8 @@ const Subcommands: SubcommantInterface[] = [
   },
   {
     name: "maintenance",
-    description: "栞子Botのメンテナンス用のコマンドです。",
+    description:
+      "栞子Botのメンテナンス用コマンドです。ボットのオーナーのみ実行できます。",
     action: subcommandMaintenance,
   },
 ];
@@ -216,6 +217,16 @@ async function subcommandAction(client, channel, interaction) {
 }
 
 async function subcommandMaintenance(client, channel, interaction) {
+  // ボットオーナーからの呼び出し化確認
+  const botOwnerId: string = process.env.BOT_OWNER_ID || "";
+  if (interaction.user.id != botOwnerId) {
+    await interaction.editReply(
+      `申し訳ありません。栞子Botのオーナーのかたにしかお答えすることができません。\n` +
+        `I'm sorry. I can only answer to those who is owner of Shioriko bot.`
+    );
+    return;
+  }
+
   const MaintenanceButtons: MaintenanceButtonInterface[] = [
     {
       id: "maint01",
