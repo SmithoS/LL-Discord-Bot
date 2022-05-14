@@ -1,7 +1,7 @@
 import { MessageEmbed } from "discord.js";
-import { DeleteMessageReason } from "../model/DeleteMessageReason";
-import { DeleteMessageDBClient } from "../lib/DeleteMessageDBClient";
-import { BaseButtonAction } from "./BaseButtonAction";
+import { DeleteMessageReason } from "../../model/DeleteMessageReason";
+import { DeleteMessageDBClient } from "../../lib/DeleteMessageDBClient";
+import { BaseButtonAction } from "../BaseButtonAction";
 
 /** 表示メッセージを削除するまでの時間（秒） */
 const DISPLAY_SECONDS = 60;

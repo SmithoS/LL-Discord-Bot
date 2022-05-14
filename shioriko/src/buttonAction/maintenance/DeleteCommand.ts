@@ -1,4 +1,4 @@
-import { BaseButtonMaintenance } from "./BaseButtonMaintenance";
+import { BaseButtonAction } from "../BaseButtonAction";
 
 /** 入力待ち時間（秒） */
 const TIMEOUT_SEC = 10;
@@ -16,7 +16,7 @@ export enum COMMAND_TYPE {
 /**
  * コマンド一覧の表示
  */
-export class DeleteCommand extends BaseButtonMaintenance {
+export class DeleteCommand extends BaseButtonAction {
   client;
   channel;
   commandType: COMMAND_TYPE;

@@ -1,4 +1,4 @@
-import { BaseButtonAction } from "./BaseButtonAction";
+import { BaseButtonAction } from "../BaseButtonAction";
 
 /**
  * ボタン呼び出しのキャンセル

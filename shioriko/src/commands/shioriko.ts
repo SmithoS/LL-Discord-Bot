@@ -5,15 +5,13 @@ import {
   MessageButtonStyleResolvable,
 } from "discord.js";
 import { BaseButtonAction } from "../buttonAction/BaseButtonAction";
-import { GetDeletedMessages } from "../buttonAction/GetDeletedMessages";
-import { CancelAction } from "../buttonAction/CancelAction";
-import { BaseButtonMaintenance } from "../buttonMaintenance/BaseButtonMaintenance";
-import { CancelMaintenance } from "../buttonMaintenance/CancelMaintenance";
-import { ShowCommands } from "../buttonMaintenance/ShowCommands";
+import { GetDeletedMessages } from "../buttonAction/action/GetDeletedMessages";
+import { CancelAction } from "../buttonAction/action/CancelAction";
+import { ShowCommands } from "../buttonAction/maintenance/ShowCommands";
 import {
   DeleteCommand,
   COMMAND_TYPE,
-} from "../buttonMaintenance/DeleteCommand";
+} from "../buttonAction/maintenance/DeleteCommand";
 
 /**
  * サブコマンド定義
@@ -25,23 +23,13 @@ interface SubcommantInterface {
 }
 
 /**
- * アクションの選択肢のボタン定義
+ * ボタンの選択肢のボタン定義
  */
 interface ActionButtonInterface {
   id: string;
   name: string;
   style: MessageButtonStyleResolvable;
   buttonActionClass: BaseButtonAction;
-}
-
-/**
- * メンテナンスの選択肢のボタン定義
- */
-interface MaintenanceButtonInterface {
-  id: string;
-  name: string;
-  style: MessageButtonStyleResolvable;
-  buttonActionClass: BaseButtonMaintenance;
 }
 
 /**
@@ -180,42 +168,21 @@ async function subcommandAction(client, channel, interaction) {
     return;
   }
 
-  // 実施できるアクションを並べて表示
-  const row = new MessageActionRow();
-  ActionButtons.forEach((ab) => {
-    row.addComponents(
-      new MessageButton()
-        .setCustomId(ab.id)
-        .setLabel(ab.name)
-        .setStyle(ab.style)
-    );
-  });
-
-  await interaction.editReply({
-    content: "どのような御用でしょうか？\n" + "May I help you?",
-    components: [row],
-  });
-
-  const filter = (btnInt: ButtonInteraction) => {
-    return interaction.user.id === btnInt.user.id;
-  };
-  const collector = channel.createMessageComponentCollector({
-    filter,
-    max: 1,
-    time: 1000 * 15,
-  });
-  collector.on("end", async (collection) => {
-    const customId: string = collection.first()?.customId;
-    const actBtn: ActionButtonInterface = ActionButtons.find((ab) => {
-      return ab.id == customId;
-    });
-
-    if (actBtn != null) {
-      actBtn.buttonActionClass.action(interaction);
-    }
-  });
+  await showButtons(
+    ActionButtons,
+    channel,
+    interaction,
+    "どのような御用でしょうか？"
+  );
 }
 
+/**
+ * メンテナンス内容を表示するサブコマンド
+ * @param client
+ * @param channel
+ * @param interaction
+ * @returns
+ */
 async function subcommandMaintenance(client, channel, interaction) {
   // ボットオーナーからの呼び出し化確認
   const botOwnerId: string = process.env.BOT_OWNER_ID || "";
@@ -227,7 +194,7 @@ async function subcommandMaintenance(client, channel, interaction) {
     return;
   }
 
-  const MaintenanceButtons: MaintenanceButtonInterface[] = [
+  const MaintenanceButtons: ActionButtonInterface[] = [
     {
       id: "maint01",
       name: "コマンド一覧の表示",
@@ -258,13 +225,34 @@ async function subcommandMaintenance(client, channel, interaction) {
       id: "maint99",
       name: "キャンセル",
       style: "SECONDARY",
-      buttonActionClass: new CancelMaintenance(),
+      buttonActionClass: new CancelAction(),
     },
   ];
 
+  await showButtons(
+    MaintenanceButtons,
+    channel,
+    interaction,
+    "どのようなメンテナンス内容でしょうか？"
+  );
+}
+
+/**
+ * ボタンを表示する
+ * @param buttons
+ * @param channel
+ * @param interaction
+ * @param questionMessage
+ */
+async function showButtons(
+  buttons: ActionButtonInterface[],
+  channel,
+  interaction,
+  questionMessage: string
+) {
   // 実施できるアクションを並べて表示
   const row = new MessageActionRow();
-  MaintenanceButtons.forEach((ab) => {
+  buttons.forEach((ab) => {
     row.addComponents(
       new MessageButton()
         .setCustomId(ab.id)
@@ -274,7 +262,7 @@ async function subcommandMaintenance(client, channel, interaction) {
   });
 
   await interaction.editReply({
-    content: "どのようなメンテナンス内容でしょうか？",
+    content: questionMessage,
     components: [row],
   });
 
@@ -288,7 +276,7 @@ async function subcommandMaintenance(client, channel, interaction) {
   });
   collector.on("end", async (collection) => {
     const customId: string = collection.first()?.customId;
-    const actBtn: MaintenanceButtonInterface = MaintenanceButtons.find((ab) => {
+    const actBtn: ActionButtonInterface = buttons.find((ab) => {
       return ab.id == customId;
     });
 

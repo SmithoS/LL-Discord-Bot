@@ -1,4 +1,4 @@
-import { BaseButtonMaintenance } from "./BaseButtonMaintenance";
+import { BaseButtonAction } from "../BaseButtonAction";
 import {
   MessageEmbed,
   EmbedFieldData,
@@ -9,7 +9,7 @@ import {
 /**
  * コマンド一覧の表示
  */
-export class ShowCommands extends BaseButtonMaintenance {
+export class ShowCommands extends BaseButtonAction {
   client;
   channel;
 
