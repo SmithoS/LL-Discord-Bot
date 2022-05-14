@@ -1,7 +1,13 @@
 export interface ValidateResult {
   result: boolean;
-  type: string;
+  type: ValidateErrorType;
   message: string;
+}
+
+export enum ValidateErrorType {
+  Token = "token",
+  Mention = "mention",
+  LineCount = "lineCount",
 }
 
 /**

@@ -1,4 +1,8 @@
-import { BaseValidater, ValidateResult } from "./BaseValidater";
+import {
+  BaseValidater,
+  ValidateResult,
+  ValidateErrorType,
+} from "./BaseValidater";
 
 /** メンションの正規表現 */
 const MENTION_REGEX = /<@[&]?[0-9]+>/g;
@@ -9,7 +13,7 @@ export class MentionValidater extends BaseValidater {
   validate(message: string): ValidateResult {
     const rtnResult: ValidateResult = {
       result: true,
-      type: "memtion",
+      type: ValidateErrorType.Mention,
       message: "",
     };
 

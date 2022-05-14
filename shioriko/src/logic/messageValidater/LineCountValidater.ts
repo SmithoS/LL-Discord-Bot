@@ -1,4 +1,8 @@
-import { BaseValidater, ValidateResult } from "./BaseValidater";
+import {
+  BaseValidater,
+  ValidateResult,
+  ValidateErrorType,
+} from "./BaseValidater";
 
 const MAX_LINE_COUNT = 15;
 
@@ -6,7 +10,7 @@ export class LineCountValidater extends BaseValidater {
   validate(message: string): ValidateResult {
     const rtnResult: ValidateResult = {
       result: true,
-      type: "lineCount",
+      type: ValidateErrorType.LineCount,
       message: "",
     };
 

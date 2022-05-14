@@ -1,4 +1,8 @@
-import { BaseValidater, ValidateResult } from "./BaseValidater";
+import {
+  BaseValidater,
+  ValidateResult,
+  ValidateErrorType,
+} from "./BaseValidater";
 
 /** トークンらしい文字列と判断する正規表現 */
 const TOKEN_REGEX = /[a-zA-Z0-9\:\-\/\.!#;&'=@_~%,\$\(\)\*\?\+]{25,}/g;
@@ -17,7 +21,7 @@ export class TokenValidater extends BaseValidater {
   validate(message: string): ValidateResult {
     const rtnResult: ValidateResult = {
       result: true,
-      type: "token",
+      type: ValidateErrorType.Token,
       message: "",
     };
 
