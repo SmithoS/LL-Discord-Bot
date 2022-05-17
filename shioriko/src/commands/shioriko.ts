@@ -41,11 +41,12 @@ const Subcommands: SubcommantInterface[] = [
     description: "挨拶をします。",
     action: subcommandGreet,
   },
-  {
-    name: "talk",
-    description: "会話をします。",
-    action: subcommandTalk,
-  },
+  // talk コマンドは一旦実装保留
+  // {
+  //   name: "talk",
+  //   description: "会話をします。",
+  //   action: subcommandTalk,
+  // },
   {
     name: "action",
     description:
