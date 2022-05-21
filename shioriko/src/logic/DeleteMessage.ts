@@ -88,6 +88,25 @@ export class DeleteMessage {
       promiseList.push(message.delete());
       await Promise.all(promiseList);
 
+      // 削除時のメンション相手を指定
+      const mentionUserIds: string =
+        process.env.USER_MENTION_IDS_WHEN_MSG_DELETED || "";
+      const mentionRoleId: string =
+        process.env.ROLE_MENTION_ID_WHEN_MSG_DELETED || "";
+      let mentions: string[] = [];
+      if (mentionUserIds) {
+        mentions = mentionUserIds.split(",").map((id) => {
+          return `<@${id}>`;
+        });
+      }
+      if (mentionRoleId) {
+        mentions.push(`<@&${mentionRoleId}>`);
+      }
+      let mentionText: string = "";
+      if (mentions.length > 0) {
+        mentionText = `（ ${mentions.join(" ")} ）`;
+      }
+
       // 削除理由を表示
       const me = this;
       const embed = new MessageEmbed();
@@ -97,7 +116,7 @@ export class DeleteMessage {
       );
       await message.channel.send({
         content:
-          "セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者までお問い合わせください。\n" +
+          `セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者${mentionText}までお問い合わせください。\n` +
           "I delete your message due to security issues. Please contact the administrator for more information.",
         embeds: [embed],
       });
