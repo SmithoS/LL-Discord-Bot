@@ -4,7 +4,6 @@ const WOKCommands = require('wokcommands');
 const path = require('path');
 const cron = require('node-cron');
 const LLFansTwitterChecker = require('./logic/LLFansTwitterChecker');
-const DeleteTokenMessage = require('./logic/DeleteTokenMessage');
 
 
 const client = new Discord.Client({
@@ -21,14 +20,6 @@ client.on('ready', () => {
         commandsDir: path.join(__dirname, 'commands'),
         testServers: [process.env.SERVER_ID]
     });
-});
-
-// メッセージの精査
-client.on('messageCreate', async (message) => {
-    await DeleteTokenMessage.checkAndDeleteMessage(message, client);
-});
-client.on('messageUpdate', async (oldMessage, newMessage) => {
-    await DeleteTokenMessage.checkAndDeleteMessage(newMessage, client);
 });
 
 // 定期的な処理の設定
