@@ -18,6 +18,9 @@ export class GetDeletedMessages extends BaseButtonAction {
   }
 
   async action(interaction) {
+    const MAX_STRING_LENGTH = 1024;
+    const me = this;
+
     // 削除メッセージを取得
     const delMsgs: DeleteMessageReason[] =
       await DeleteMessageDBClient.getDeleteMsgByCount(
@@ -56,9 +59,17 @@ export class GetDeletedMessages extends BaseButtonAction {
         },
         {
           name: "■ 原文",
-          value: d.message,
+          value: me.cutOutString(d.message, MAX_STRING_LENGTH),
         },
       ]);
+
+      if ((d.message || "").length > MAX_STRING_LENGTH) {
+        embed.addField(
+          "■ 注意事項",
+          "本文があまりに長いため途中までしか表示していません。"
+        );
+      }
+
       return embed;
     });
 
@@ -71,5 +82,18 @@ export class GetDeletedMessages extends BaseButtonAction {
     setTimeout(() => {
       interaction.deleteReply();
     }, DISPLAY_SECONDS * 1000);
+  }
+
+  /**
+   * 文字列の切り取り
+   * @param str 文字列
+   * @param length 切り取る長さ
+   * @returns
+   */
+  private cutOutString(str: string, length: number) {
+    if (str == null || str.length <= length) {
+      return str;
+    }
+    return str.substr(0, length);
   }
 }
