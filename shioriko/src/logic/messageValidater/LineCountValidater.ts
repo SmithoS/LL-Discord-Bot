@@ -4,7 +4,8 @@ import {
   ValidateErrorType,
 } from "./BaseValidater";
 
-const MAX_LINE_COUNT = 30;
+/** 削除判定する行数 */
+const MAX_LINE_COUNT = 100;
 
 export class LineCountValidater extends BaseValidater {
   validate(message: string): ValidateResult {
