@@ -116,7 +116,7 @@ jobs:
       # dockerイメージを作成してECRへ登録
       # タグは最新のものに「latest」を設定して運用する
       - name: LL-Bot Build, tag, and push image to Amazon ECR
-        id: build-image-shioriko
+        id: build-image-ll
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
