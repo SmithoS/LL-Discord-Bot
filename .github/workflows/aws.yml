@@ -37,17 +37,22 @@ env:
   AWS_REGION: ap-northeast-1
   # ---------- shioriko-bot ----------
   # コードが入っているディレクトリ
-  SERVICE_DIR: shioriko
+  SHIORIKO_SERVICE_DIR: shioriko
   # ECRレポジトリ名
-  ECR_REPOSITORY: shioriko-bot
+  SHIORIKO_ECR_REPOSITORY: shioriko-bot
   # タスク定義名
-  ECS_TASK_DEFINITION-FAMILY: Shioriko-bot
+  SHIORIKO_ECS_TASK_DEFINITION-FAMILY: Shioriko-bot
   # コンテナ名
-  CONTAINER_NAME: shioriko-container
-  # ECSサービス名
-  ECS_SERVICE: shioriko-bot-service
-  # ECSクラスタ名
-  ECS_CLUSTER: LL-Bot-Cluster
+  SHIORIKO_CONTAINER_NAME: shioriko-container
+
+  # コードが入っているディレクトリ
+  LL_SERVICE_DIR: llbot
+  # ECRレポジトリ名
+  LL_ECR_REPOSITORY: ll-bot
+  # タスク定義名
+  LL_ECS_TASK_DEFINITION-FAMILY: LL-bot
+  # コンテナ名
+  LL_CONTAINER_NAME: ll-container
 
 jobs:
   deploy:
@@ -73,32 +78,52 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
 
+      ##############################################
+      # 栞子Botのデプロイ
+      ##############################################
+
       # dockerイメージを作成してECRへ登録
       # タグは最新のものに「latest」を設定して運用する
-      - name: Build, tag, and push image to Amazon ECR
-        id: build-image
+      - name: Shioriko-Bot Build, tag, and push image to Amazon ECR
+        id: build-image-shioriko
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           IMAGE_TAG: latest
         run: |
-          docker build --build-arg SERVICE_DIR=$SERVICE_DIR -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build --build-arg SERVICE_DIR=$SHIORIKO_SERVICE_DIR -t $ECR_REGISTRY/$SHIORIKO_ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$SHIORIKO_ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$SHIORIKO_ECR_REPOSITORY:$IMAGE_TAG"
 
-      # タスク定義をダウンロード
-      # すでに動いているものを再利用する
-      - name: Download task definition
+      # # タスク定義をダウンロード
+      # # すでに動いているものを再利用する
+      # - name: Shioriko-Bot Download task definition
+      #   run: |
+      #     aws ecs describe-task-definition --task-definition ${{ env.SHIORIKO_ECS_TASK_DEFINITION-FAMILY }} --query taskDefinition > shioriko-task-definition.json
+
+      # # タスク定義を作成
+      # - name: Shioriko-Bot Fill in the new image ID in the Amazon ECS task definition
+      #   id: task-def-shioriko
+      #   uses: aws-actions/amazon-ecs-render-task-definition@v1
+      #   with:
+      #     task-definition: shioriko-task-definition.json
+      #     container-name: ${{ env.SHIORIKO_CONTAINER_NAME }}
+      #     image: ${{ steps.build-image.outputs.image }}
+
+      ##############################################
+      # LL-Botのデプロイ
+      ##############################################
+
+      # dockerイメージを作成してECRへ登録
+      # タグは最新のものに「latest」を設定して運用する
+      - name: LL-Bot Build, tag, and push image to Amazon ECR
+        id: build-image-shioriko
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: latest
         run: |
-          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION-FAMILY }} --query taskDefinition > shioriko-task-definition.json
-
-      # タスク定義を作成
-      - name: Fill in the new image ID in the Amazon ECS task definition
-        id: task-def
-        uses: aws-actions/amazon-ecs-render-task-definition@v1
-        with:
-          task-definition: shioriko-task-definition.json
-          container-name: ${{ env.CONTAINER_NAME }}
-          image: ${{ steps.build-image.outputs.image }}
+          docker build --build-arg SERVICE_DIR=$LL_SERVICE_DIR -t $ECR_REGISTRY/$LL_ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$LL_ECR_REPOSITORY:$IMAGE_TAG
+          echo "::set-output name=image::$ECR_REGISTRY/$LL_ECR_REPOSITORY:$IMAGE_TAG"
 
       # ローリングアップデートできるほどリソースに余裕がないので、ECSの更新は手動で行う
       # # ECSへデプロイ
