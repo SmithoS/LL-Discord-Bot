@@ -25,10 +25,11 @@ client.on("ready", () => {
 });
 
 // 定期的な処理の設定
-cron.schedule(process.env.LLFANS_TWITTER_CHECKER_CRON, async () => {
-  console.log("cron call");
-  await LLFansTwitterChecker.checkUserStatusAndSendMessage(client);
-});
+// -> 栞子Botに機能を移動
+// cron.schedule(process.env.LLFANS_TWITTER_CHECKER_CRON, async () => {
+//   console.log("cron call");
+//   await LLFansTwitterChecker.checkUserStatusAndSendMessage(client);
+// });
 
 // Node.js のエラーハンドリング
 // 申し訳程度の機能
