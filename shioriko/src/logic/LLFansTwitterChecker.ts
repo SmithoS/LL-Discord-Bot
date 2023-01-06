@@ -13,12 +13,6 @@ export class LLFansTwitterChecker {
    * @param client
    */
   static async checkUserStatusAndSendMessage(client) {
-    // メッセージ送信チャンネルを取得
-    const channel = await client.channels.fetch(
-      process.env.SEND_LLFANS_STATUS_CHANNEL_ID
-    );
-    if (channel == null) return;
-
     // 前回の情報を取得
     const beforeInfo: TwitterUserInfo =
       await LLFansTwitterDBClient.getLatestInfo();
@@ -51,6 +45,12 @@ export class LLFansTwitterChecker {
       currentFavTweetId,
       incrementFavCount
     );
+
+    // メッセージ送信チャンネルを取得
+    const channel = await client.channels.fetch(
+      process.env.SEND_LLFANS_STATUS_CHANNEL_ID
+    );
+    if (channel == null) return;
 
     // 通知情報
     let changeInfo: EmbedFieldData[] = [];

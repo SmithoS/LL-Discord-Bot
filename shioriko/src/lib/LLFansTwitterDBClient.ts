@@ -6,7 +6,7 @@ dotenv.config();
 interface LLFansDBApiParam {
   key: string;
   method: string;
-  data?: object;
+  data?: string;
 }
 
 interface GetResponse {
@@ -19,10 +19,8 @@ export class LLFansTwitterDBClient {
    * @returns
    */
   static async getLatestInfo(): Promise<TwitterUserInfo> {
-    const client: AxiosInstance = this.createLLFansDBAxiosClient(
-      "getLatestInfo",
-      null
-    );
+    const client: AxiosInstance =
+      this.createLLFansDBAxiosClient("getLatestInfo");
 
     const response: AxiosResponse = await client.get(process.env.DB_URL);
     return (response.data as GetResponse).data;
@@ -46,14 +44,18 @@ export class LLFansTwitterDBClient {
     latestFavTweetId: string,
     incrementFavCount: number
   ): Promise<void> {
-    const client: AxiosInstance = this.createLLFansDBAxiosClient("saveInfo", {
+    const sendData = {
       formattedTime: formattedTime,
       tweetCount: tweetCount,
       followersCount: followersCount,
       followingCount: followingCount,
       latestFavTweetId: latestFavTweetId,
       incrementFavCount: incrementFavCount,
-    });
+    };
+    const client: AxiosInstance = this.createLLFansDBAxiosClient(
+      "saveInfo",
+      sendData
+    );
 
     await client.post(process.env.DB_URL);
     return;
@@ -67,7 +69,7 @@ export class LLFansTwitterDBClient {
    */
   private static createLLFansDBAxiosClient(
     method: string,
-    sendData: object
+    sendData: any = null
   ): AxiosInstance {
     // 送信パラメータ作成
     let sendParam: LLFansDBApiParam = {
@@ -75,7 +77,7 @@ export class LLFansTwitterDBClient {
       method: method,
     };
     if (sendData != null) {
-      sendParam.data = sendData;
+      sendParam.data = JSON.stringify(sendData);
     }
 
     return axios.create({
