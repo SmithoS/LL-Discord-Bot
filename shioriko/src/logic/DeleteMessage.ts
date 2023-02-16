@@ -117,7 +117,7 @@ export class DeleteMessage {
       await message.channel.send({
         content:
           `セキュリティ上の問題によりメッセージを削除しました。詳しくは管理者${mentionText}までお問い合わせください。\n` +
-          "I delete your message due to security issues. Please contact the administrator for more information.",
+          "I deleted your message due to security issues. Please contact the administrator for more information.",
         embeds: [embed],
       });
     }
