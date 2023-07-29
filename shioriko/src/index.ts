@@ -1,11 +1,9 @@
 import { DeleteMessage } from "./logic/DeleteMessage";
-import { LLFansTwitterChecker } from "./logic/LLFansTwitterChecker";
 import Discord from "discord.js";
 // WOKCommands ライブラリは型定義ファイルがおかしく、import するとトランスパイル時にエラーとなるのでrequireで読み込んでエラーを避ける
 const WOKCommands = require("wokcommands");
 import path from "path";
 import dotenv from "dotenv";
-const cron = require("node-cron");
 dotenv.config();
 
 const client = new Discord.Client({
@@ -23,12 +21,6 @@ client.on("ready", () => {
     ignoreBots: true,
     testServers: [process.env.SERVER_ID],
   });
-});
-
-// 定期的な処理の設定
-const cronTime = process.env.LLFANS_TWITTER_CHECKER_CRON || "0 1 0 * * *";
-cron.schedule(cronTime, async () => {
-  await LLFansTwitterChecker.checkUserStatusAndSendMessage(client);
 });
 
 // メッセージの精査

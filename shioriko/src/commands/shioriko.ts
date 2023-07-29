@@ -6,7 +6,6 @@ import {
 } from "discord.js";
 import { BaseButtonAction } from "../buttonAction/BaseButtonAction";
 import { GetDeletedMessages } from "../buttonAction/action/GetDeletedMessages";
-import { TelLLFansTwitterInfoUrl } from "../buttonAction/action/TelLLFansTwitterInfoUrl";
 import { CancelAction } from "../buttonAction/action/CancelAction";
 import { ShowCommands } from "../buttonAction/maintenance/ShowCommands";
 import {
@@ -71,12 +70,6 @@ const ActionButtons: ActionButtonInterface[] = [
     name: "直近の削除されたメッセージを教えて",
     style: "PRIMARY",
     buttonActionClass: new GetDeletedMessages(1),
-  },
-  {
-    id: "act02",
-    name: "LL-FansのTwitter情報を教えて",
-    style: "PRIMARY",
-    buttonActionClass: new TelLLFansTwitterInfoUrl(),
   },
   {
     id: "act99",
