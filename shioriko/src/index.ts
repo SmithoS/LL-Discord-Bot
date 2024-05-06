@@ -4,8 +4,10 @@ import Discord from "discord.js";
 const WOKCommands = require("wokcommands");
 import path from "path";
 import dotenv from "dotenv";
+import express from "express";
 dotenv.config();
 
+// Discord Botのクライアント作成
 const client = new Discord.Client({
   intents: [
     Discord.Intents.FLAGS.GUILDS,
@@ -14,7 +16,7 @@ const client = new Discord.Client({
   ],
 });
 
-// Botのコマンド登録
+// Discord Botのコマンド登録
 client.on("ready", () => {
   new WOKCommands(client, {
     commandsDir: path.join(__dirname, "commands"),
@@ -23,7 +25,7 @@ client.on("ready", () => {
   });
 });
 
-// メッセージの精査
+// Discord Botの起動設定（メッセージ送信時に起動）
 client.on("messageCreate", async (message) => {
   await DeleteMessage.checkAndDeleteMessage(message, client);
 });
@@ -32,3 +34,10 @@ client.on("messageUpdate", async (oldMessage, newMessage) => {
 });
 
 client.login(process.env.TOKEN);
+
+// ヘルスチェック用API
+const app = express();
+app.get("/", (req, res) => {
+  res.send("OK");
+});
+app.listen(8000);
