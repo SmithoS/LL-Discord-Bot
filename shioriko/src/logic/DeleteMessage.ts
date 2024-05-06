@@ -67,8 +67,8 @@ export class DeleteMessage {
         return prev + (prev != "" ? "\n" : "") + curr.message;
       }, "");
 
-      // 削除理由の登録、
       const promiseList: Array<Promise<any>> = [];
+      // 削除理由の登録
       promiseList.push(
         DeleteMessageDBClient.registDeleteMsg(
           new DeleteMessageReason(
@@ -84,6 +84,7 @@ export class DeleteMessage {
           )
         )
       );
+
       // メッセージ削除
       promiseList.push(message.delete());
       await Promise.all(promiseList);
