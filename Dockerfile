@@ -1,4 +1,4 @@
-FROM node:16-alpine
+FROM node:18-alpine
 
 # 外部パラメータ
 ARG SERVICE_DIR
